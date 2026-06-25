@@ -11,7 +11,6 @@ export const useUserStore = defineStore('user', () => {
   const isLoggedIn = computed(() => !!accessToken.value)
   const isAdmin = computed(() => user.value?.role === 'ADMIN')
 
-  /** 设置 Token */
   function setTokens(access: string, refresh: string) {
     accessToken.value = access
     refreshToken.value = refresh
@@ -19,7 +18,6 @@ export const useUserStore = defineStore('user', () => {
     localStorage.setItem('refreshToken', refresh)
   }
 
-  /** 清除 Token */
   function clearTokens() {
     accessToken.value = ''
     refreshToken.value = ''
@@ -27,19 +25,17 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('refreshToken')
   }
 
-  /** 登录 */
+  /** 登录 —— 响应拦截器已解包，res 直接是 { accessToken, refreshToken, user } */
   async function login(email: string, password: string) {
     const res = await authApi.login({ email, password })
-    setTokens(res.data.accessToken, res.data.refreshToken)
-    user.value = res.data.user
+    setTokens(res.accessToken, res.refreshToken)
+    user.value = res.user
   }
 
-  /** 注册 */
   async function register(data: { username: string; email: string; password: string }) {
     await authApi.register(data)
   }
 
-  /** 登出 */
   async function logout() {
     try {
       await authApi.logout()
@@ -49,22 +45,20 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  /** 获取用户信息 */
+  /** 获取用户信息 —— 响应拦截器已解包 */
   async function fetchProfile() {
-    const res = await authApi.getProfile()
-    user.value = res.data
+    user.value = await authApi.getProfile()
   }
 
-  /** 恢复登录状态（页面刷新时） */
+  /** 恢复登录状态 */
   async function restoreLogin() {
     if (!accessToken.value) return
     try {
       await fetchProfile()
     } catch {
-      // Token 过期，尝试刷新
       try {
         const res = await authApi.refreshToken()
-        setTokens(res.data.accessToken, res.data.refreshToken)
+        setTokens(res.accessToken, res.refreshToken)
         await fetchProfile()
       } catch {
         clearTokens()
@@ -73,17 +67,10 @@ export const useUserStore = defineStore('user', () => {
   }
 
   return {
-    user,
-    accessToken,
-    refreshToken,
-    isLoggedIn,
-    isAdmin,
-    login,
-    register,
-    logout,
-    fetchProfile,
-    restoreLogin,
-    setTokens,
-    clearTokens,
+    user, accessToken, refreshToken,
+    isLoggedIn, isAdmin,
+    login, register, logout,
+    fetchProfile, restoreLogin,
+    setTokens, clearTokens,
   }
 })
