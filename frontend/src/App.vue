@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 const userStore = useUserStore()
 
 onMounted(() => {
-  // 应用初始化时尝试恢复登录状态
   userStore.restoreLogin()
 })
 </script>
 
 <template>
-  <router-view />
+  <DefaultLayout />
 </template>

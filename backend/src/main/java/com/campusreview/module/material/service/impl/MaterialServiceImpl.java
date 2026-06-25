@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.campusreview.common.constant.ResultCode;
 import com.campusreview.common.exception.BusinessException;
+import com.campusreview.module.course.mapper.CourseMapper;
 import com.campusreview.module.favorite.entity.Favorite;
 import com.campusreview.module.favorite.mapper.FavoriteMapper;
 import com.campusreview.module.like.entity.MaterialLike;
@@ -12,6 +13,7 @@ import com.campusreview.module.like.mapper.MaterialLikeMapper;
 import com.campusreview.module.material.entity.Material;
 import com.campusreview.module.material.mapper.MaterialMapper;
 import com.campusreview.module.material.service.MaterialService;
+import com.campusreview.module.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +36,8 @@ public class MaterialServiceImpl implements MaterialService {
     private final MaterialMapper materialMapper;
     private final MaterialLikeMapper likeMapper;
     private final FavoriteMapper favoriteMapper;
+    private final UserMapper userMapper;
+    private final CourseMapper courseMapper;
 
     @Value("${file.upload.path:./uploads}")
     private String uploadPath;
@@ -41,19 +45,36 @@ public class MaterialServiceImpl implements MaterialService {
     @Override
     public Page<Material> pageQuery(int page, int size, Long courseId, String type,
                                      Integer year, String keyword, String sort, Long currentUserId) {
-        Material query = new Material();
-        query.setCourseId(courseId);
-        query.setType(type);
-        query.setYear(year);
-        query.setTitle(keyword); // 复用 title 字段传 keyword，在 XML 中处理
+        LambdaQueryWrapper<Material> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Material::getStatus, "PUBLISHED");
+        if (courseId != null) wrapper.eq(Material::getCourseId, courseId);
+        if (type != null && !type.isEmpty()) wrapper.eq(Material::getType, type);
+        if (year != null) wrapper.eq(Material::getYear, year);
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.and(w -> w.like(Material::getTitle, keyword).or().like(Material::getDescription, keyword));
+        }
+        if ("popular".equals(sort)) {
+            wrapper.orderByDesc(Material::getLikeCount);
+        } else if ("downloads".equals(sort)) {
+            wrapper.orderByDesc(Material::getDownloadCount);
+        } else {
+            wrapper.orderByDesc(Material::getCreatedAt);
+        }
 
-        Page<Material> mpPage = new Page<>(page, size);
-        List<Material> records = materialMapper.selectMaterialList(mpPage, query);
-        mpPage.setRecords(records);
+        Page<Material> mpPage = materialMapper.selectPage(new Page<>(page, size), wrapper);
+        List<Material> records = mpPage.getRecords();
 
-        // 标记当前用户是否已点赞/收藏
-        if (currentUserId != null) {
-            for (Material m : records) {
+        // 补充联表字段
+        for (Material m : records) {
+            if (m.getUploaderId() != null) {
+                var user = userMapper.selectById(m.getUploaderId());
+                if (user != null) m.setUploaderName(user.getNickname());
+            }
+            if (m.getCourseId() != null) {
+                var course = courseMapper.selectById(m.getCourseId());
+                if (course != null) m.setCourseName(course.getName());
+            }
+            if (currentUserId != null) {
                 m.setLiked(hasLiked(m.getId(), currentUserId));
                 m.setFavorited(hasFavorited(m.getId(), currentUserId));
             }

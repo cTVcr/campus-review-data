@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { materialApi } from '@/api/material'
 import { courseApi } from '@/api/course'

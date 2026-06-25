@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 const stats = [
   { label: '用户总数', value: '--', icon: 'User' },
   { label: '资料总数', value: '--', icon: 'Document' },

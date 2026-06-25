@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { materialApi } from '@/api/material'
 import { MaterialTypeLabels } from '@/types'
 import type { Material } from '@/types'
