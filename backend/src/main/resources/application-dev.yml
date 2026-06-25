@@ -1,0 +1,40 @@
+# 开发环境配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/campus_review?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+  # 开发环境邮件配置（使用 MailDev 或真实邮箱）
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: your-email@qq.com
+    password: your-auth-code
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+# 开发环境日志
+logging:
+  level:
+    com.campusreview: debug
+    org.springframework.security: debug

@@ -1,0 +1,45 @@
+# ==================== Java / Maven ====================
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.nar
+
+# ==================== Node.js ====================
+node_modules/
+dist/
+.nuxt/
+.output/
+
+# ==================== IDE ====================
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# ==================== OS ====================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ==================== Environment ====================
+.env
+.env.local
+.env.*.local
+
+# ==================== Uploads ====================
+uploads/
+*.log
+
+# ==================== Docker ====================
+docker-volumes/
+
+# ==================== Claude ====================
+.claude/
+
+# ==================== Misc ====================
+*.tmp
+.cache/
