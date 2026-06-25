@@ -1,6 +1,7 @@
 package com.campusreview.common.response;
 
 import com.campusreview.common.constant.ResultCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -79,6 +80,7 @@ public class Result<T> implements Serializable {
         return fail(ResultCode.NOT_FOUND);
     }
 
+    @JsonIgnore
     public boolean isSuccess() {
         return ResultCode.SUCCESS.getCode().equals(this.code);
     }

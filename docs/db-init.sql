@@ -144,6 +144,6 @@ CREATE TABLE IF NOT EXISTS download_record (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='下载记录表';
 
 -- ==================== 种子数据：插入默认管理员 ====================
--- 密码: admin123（BCrypt 加密）
+-- 密码: 123456（BCrypt 加密）
 INSERT INTO sys_user (username, email, password, nickname, role) VALUES
-('admin', 'admin@campus-review.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5Eh', '系统管理员', 'ADMIN');
+('admin', 'admin@campus-review.com', '$2a$10$6pSR/awkV9/v4t455ypRxu6oRqKdnsOSLwVPGRahMoRP4R.CFpVJO', '系统管理员', 'ADMIN');
