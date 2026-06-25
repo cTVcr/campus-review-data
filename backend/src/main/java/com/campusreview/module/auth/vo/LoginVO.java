@@ -19,5 +19,6 @@ public class LoginVO {
         private String nickname;
         private String avatarUrl;
         private String role;
+        private String createdAt;
     }
 }

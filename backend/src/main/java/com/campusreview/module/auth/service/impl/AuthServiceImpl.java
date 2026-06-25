@@ -79,6 +79,7 @@ public class AuthServiceImpl implements AuthService {
                         .nickname(user.getNickname())
                         .avatarUrl(user.getAvatarUrl())
                         .role(user.getRole())
+                        .createdAt(user.getCreatedAt() != null ? user.getCreatedAt().toString() : null)
                         .build())
                 .build();
     }

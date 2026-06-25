@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
                 .nickname(user.getNickname())
                 .avatarUrl(user.getAvatarUrl())
                 .role(user.getRole())
+                .createdAt(user.getCreatedAt() != null ? user.getCreatedAt().toString() : null)
                 .build();
     }
 
